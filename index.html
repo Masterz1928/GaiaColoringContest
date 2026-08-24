@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Know Our Hornbills — Colouring Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --canopy: #2E6B45;
+    --canopy-deep: #1D4A30;
+    --bark: #8B5A2B;
+    --gold: #FFC72C;
+    --orange: #FF8C2E;
+    --sky: #5FC7E8;
+    --cream: #FFF8E7;
+    --ink: #2A1F14;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--canopy);
+    font-family: 'Nunito', sans-serif;
+    color: var(--cream);
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 24px;
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(255,199,44,0.22), transparent 55%),
+      radial-gradient(ellipse at 90% 85%, rgba(95,199,232,0.14), transparent 50%),
+      linear-gradient(180deg, var(--canopy) 0%, var(--canopy-deep) 100%);
+    overflow: hidden;
+  }
+
+  .leaf-decor {
+    position: absolute;
+    opacity: 0.5;
+  }
+  .leaf-decor.tl { top: -40px; left: -40px; width: 220px; }
+  .leaf-decor.br { bottom: -40px; right: -40px; width: 220px; transform: scaleX(-1); }
+
+
+  h1 {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 800;
+    font-size: clamp(38px, 7vw, 74px);
+    line-height: 1.05;
+    color: var(--gold);
+    -webkit-text-stroke: 2px var(--ink);
+    text-shadow: 3px 3px 0 var(--ink);
+    max-width: 780px;
+    opacity: 0;
+    animation: dropIn 0.7s 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    z-index: 2;
+  }
+
+  h2 {
+    text-align: center;
+  }
+
+  .tagline {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    font-size: clamp(13px, 2vw, 16px);
+    color: var(--cream);
+    margin-top: 18px;
+    opacity: 0;
+    animation: dropIn 0.6s 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    z-index: 2;
+  }
+
+  .sub {
+    font-size: clamp(15px, 2vw, 18px);
+    max-width: 480px;
+    margin-top: 20px;
+    color: #D9CFB0;
+    font-weight: 600;
+    opacity: 0;
+    animation: dropIn 0.6s 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    z-index: 2;
+  }
+
+  .cta-row {
+    margin-top: 34px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    opacity: 0;
+    animation: dropIn 0.6s 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    z-index: 2;
+  }
+
+  .btn {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    padding: 15px 28px;
+    border-radius: 14px;
+    border: 3px solid var(--ink);
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    text-decoration: none;
+  }
+
+  .btn-primary { background: var(--orange); color: var(--ink); box-shadow: 4px 4px 0 var(--ink); }
+  .btn-secondary { background: var(--cream); color: var(--ink); box-shadow: 4px 4px 0 var(--ink); }
+  .btn:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+
+  /* hornbill illustration image slot */
+  .illo-wrap {
+    margin-top: 50px;
+    width: min(520px, 90vw);
+    opacity: 0;
+    animation: dropIn 0.7s 0.65s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    z-index: 2;
+  }
+  .illo-wrap img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 12px 24px rgba(0,0,0,0.35));
+  }
+
+  @keyframes dropIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .caption {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: #8FA894;
+    margin-top: 10px;
+    letter-spacing: 0.04em;
+    z-index: 2;
+  }
+
+  /* ===== SECTIONS ===== */
+  section.block {
+    padding: 70px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+
+  h2 {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 40px);
+    color: var(--cream);
+    margin-bottom: 30px;
+  }
+
+  .age-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 560px) { .age-cards { grid-template-columns: 1fr; } }
+
+  .age-card {
+    background: var(--cream);
+    color: var(--ink);
+    border-radius: 20px;
+    padding: 26px;
+    border: 3px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--bark);
+  }
+  .age-card .cat {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--orange);
+    color: var(--ink);
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+  }
+  .age-card .range {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--bark);
+  }
+  .age-card p { margin-top: 8px; font-weight: 600; font-size: 14px; color: #5C4E3D; }
+
+  /* How to join steps */
+  .steps { display: flex; flex-direction: column; gap: 14px; }
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: rgba(251,243,222,0.06);
+    border: 2px solid rgba(251,243,222,0.15);
+    border-radius: 16px;
+    padding: 18px 20px;
+  }
+  .step-num {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--canopy-deep);
+    background: var(--gold);
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-text strong { display: block; font-size: 16px; margin-bottom: 2px; color: var(--cream); }
+  .step-text span { font-size: 14px; color: #B8AE94; }
+
+  /* Dates */
+  .dates-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .date-chip {
+    background: var(--bark);
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    padding: 16px 22px;
+    flex: 1;
+    min-width: 180px;
+  }
+  .date-chip .label { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: var(--gold); text-transform: uppercase; }
+  .date-chip .value { font-family: 'Baloo 2', sans-serif; font-size: 20px; margin-top: 6px; color: var(--cream); }
+
+  /* Final CTA */
+  .final-cta {
+    text-align: center;
+    padding: 80px 24px 100px;
+  }
+  .final-cta h2 { margin-bottom: 16px; }
+  .final-cta p { color: #D9CFB0; font-weight: 600; margin-bottom: 30px; max-width: 460px; margin-left: auto; margin-right: auto; }
+
+  footer {
+    text-align: center;
+    padding: 30px 24px 50px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: #7A8F7E;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; animation-delay: 0s !important; }
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <svg class="leaf-decor tl" viewBox="0 0 200 200"><path d="M0,0 C60,20 100,60 90,140 C80,90 40,50 0,40 Z" fill="var(--bark)"/></svg>
+  <svg class="leaf-decor br" viewBox="0 0 200 200"><path d="M0,0 C60,20 100,60 90,140 C80,90 40,50 0,40 Z" fill="var(--bark)"/></svg>
+
+  <h1>Know Our<br>Hornbills</h1>
+  <p class="tagline">COLOUR &nbsp;·&nbsp; LEARN &nbsp;·&nbsp; DISCOVER</p>
+  <p class="sub">Meet the Rhinoceros Hornbill and the Great Hornbill — colour them in, learn what makes them different, and enter your artwork for a chance to win.</p>
+
+  <div class="cta-row" id="main-ctas">
+    <button class="btn btn-primary">Download the PDF</button>
+    <a class="btn btn-secondary" href="https://forms.gle/cGkQf7kqsKkGxp389" role="button">Submit your entry</a>
+  </div>
+
+  <div class="illo-wrap">
+    <!-- swap src for your final transparent hornbill image once ready -->
+    <img src="hornbills.png" alt="Rhinoceros Hornbill and Great Hornbill illustration">
+  </div>
+</section>
+
+<section class="block">
+  <h2>Two age groups, two chances to win</h2>
+  <div class="age-cards">
+    <div class="age-card">
+      <span class="cat">Category A</span>
+      <div class="range">7-9 yrs</div>
+      <p>Placeholder for prize details</p>
+    </div>
+    <div class="age-card">
+      <span class="cat">Category B</span>
+      <div class="range">9-12 yrs</div>
+      <p>Placeholder for prize details</p>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Join in with five easy steps</h2>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Download the official colouring sheet</strong><span>Link below/Click link above</span></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Learn about the two hornbills</strong><span>Placeholder — link to fun facts section.</span></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Colour your artwork creatively</strong><span>Any medium — crayons, pencils, paint, or color digitally.</span></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Submit your completed artwork</strong><span>Clear photo or scan, uploaded via the form.</span></div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-text"><strong>Win exciting prizes</strong><span>Placeholder — prize details TBC.</span></div></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Mark your calendar</h2>
+  <div class="dates-row">
+    <div class="date-chip"><div class="label">Submission Period</div><div class="value">[Date] – [Date]</div></div>
+    <div class="date-chip"><div class="label">Winners Announced</div><div class="value">[Date]</div></div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <h2>Ready to get started?</h2>
+  <button class="btn btn-primary" onclick="document.getElementById('main-ctas').scrollIntoView({behavior:'smooth', block:'center'})">Back to the top</button>
+</section>
+
+<footer>
+  Organised by GAIA &nbsp;·&nbsp; Placeholder social links here
+</footer>
+
+</body>
+</html>
