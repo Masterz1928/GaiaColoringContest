@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Judges Portal — Know Our Hornbills</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F7F5;
+    --card: #FFFFFF;
+    --border: #E4E3DE;
+    --ink: #1C1E1D;
+    --muted: #6B6E68;
+    --teal: #0F6E5F;
+    --teal-soft: #E4F1EE;
+    --warn: #C24B2C;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    font-family: 'Inter', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 60px;
+  }
+
+  /* ===== Access gate ===== */
+  .gate {
+    max-width: 420px;
+    margin-top: 15vh;
+    text-align: center;
+  }
+  .gate .icon { font-size: 32px; margin-bottom: 12px; }
+  .gate h2 { font-size: 20px; margin-bottom: 8px; }
+  .gate p { font-size: 14px; color: var(--muted); line-height: 1.5; }
+
+  header { width: 100%; max-width: 640px; margin-bottom: 28px; }
+  .top-row { display: flex; align-items: center; justify-content: space-between; }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); }
+  .judge-badge {
+    font-size: 12px; font-weight: 600; background: var(--teal-soft); color: var(--teal);
+    padding: 5px 12px; border-radius: 999px;
+  }
+  h1 { font-size: 24px; font-weight: 700; margin-top: 4px; }
+
+  .progress-row { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; }
+  .progress-label { font-size: 13px; color: var(--muted); font-weight: 500; white-space: nowrap; }
+  .progress-track { flex: 1; height: 6px; background: var(--border); border-radius: 999px; margin-left: 16px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--teal); border-radius: 999px; transition: width 0.3s ease; }
+
+  .filter-row { display: flex; gap: 8px; margin-top: 16px; }
+  .filter-chip {
+    font-size: 13px; font-weight: 600; padding: 7px 16px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--card); color: var(--muted); cursor: pointer;
+  }
+  .filter-chip.active { background: var(--teal); color: white; border-color: var(--teal); }
+
+  main { width: 100%; max-width: 640px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+  }
+  .card-image {
+    width: 100%; aspect-ratio: 4/3; background: #EEEEEA;
+    display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+  }
+  .card-image img { width: 100%; height: 100%; object-fit: contain; background: white; }
+  .card-image .fallback {
+    display: none; flex-direction: column; align-items: center; gap: 8px;
+    color: var(--muted); font-size: 13px; padding: 20px; text-align: center;
+  }
+  .card-image .fallback a { color: var(--teal); font-weight: 600; text-decoration: none; }
+
+  .card-body { padding: 22px 24px 24px; }
+  .card-meta-row { display: flex; align-items: center; justify-content: space-between; }
+  .entry-name { font-size: 19px; font-weight: 700; }
+  .entry-tag { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--teal-soft); color: var(--teal); }
+  .entry-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  .score-status { margin-top: 16px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+  .score-status.done { color: var(--teal); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); }
+  .score-status.done .dot { background: var(--teal); }
+
+  /* inline scoring widget */
+  .score-widget { margin-top: 18px; display: flex; gap: 10px; align-items: center; }
+  .score-input {
+    width: 76px; padding: 12px; font-size: 16px; font-weight: 700; text-align: center;
+    border: 1px solid var(--border); border-radius: 10px; font-family: 'Inter', sans-serif;
+  }
+  .score-input:focus { outline: none; border-color: var(--teal); }
+  .btn-submit-score {
+    flex: 1; text-align: center; background: var(--teal); color: white; font-weight: 700; font-size: 15px;
+    padding: 13px; border-radius: 10px; border: none; cursor: pointer; font-family: 'Inter', sans-serif;
+  }
+  .btn-submit-score:hover { background: #0C5A4E; }
+  .btn-submit-score:disabled { opacity: 0.5; cursor: not-allowed; }
+  .score-msg { font-size: 12px; margin-top: 8px; color: var(--muted); min-height: 16px; }
+  .score-msg.error { color: var(--warn); }
+  .score-msg.success { color: var(--teal); }
+
+  .nav-row { display: flex; gap: 12px; margin-top: 16px; }
+  .nav-btn {
+    flex: 1; text-align: center; padding: 12px; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--card); color: var(--ink); font-weight: 600; font-size: 14px; cursor: pointer;
+  }
+  .nav-btn:hover { background: var(--bg); }
+  .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  footer { margin-top: 36px; font-size: 12px; color: var(--muted); text-align: center; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ACCESS GATE: shown if no valid judge/token in URL -->
+<div class="gate" id="gateScreen">
+  <div class="icon">🔒</div>
+  <h2>Judges access only</h2>
+  <p>This page needs a personal access link. Please use the link that was shared with you directly — if you don't have one, contact the organiser.</p>
+</div>
+
+<!-- MAIN PORTAL: shown once judge/token verified -->
+<div id="portalRoot" class="hidden" style="width:100%; display:flex; flex-direction:column; align-items:center;">
+
+  <header>
+    <div class="top-row">
+      <div class="eyebrow">Gaia · Judges Portal</div>
+      <div class="judge-badge" id="judgeBadge">Scoring as —</div>
+    </div>
+    <h1>Know Our Hornbills — Review Entries</h1>
+
+    <div class="progress-row">
+      <span class="progress-label" id="progressLabel">Entry 1 of 6</span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:16%"></div></div>
+    </div>
+
+    <div class="filter-row">
+      <button class="filter-chip active" data-cat="all">All</button>
+      <button class="filter-chip" data-cat="A">Category A (7–9)</button>
+      <button class="filter-chip" data-cat="B">Category B (9–12)</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="card">
+      <div class="card-image">
+        <img id="entryImg" src="" alt="Current entry artwork" onerror="showFallback()">
+        <div class="fallback" id="imgFallback">
+          <span>Preview unavailable</span>
+          <a id="fallbackLink" href="#" target="_blank">Open original file →</a>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-meta-row">
+          <div>
+            <div class="entry-name" id="entryName">—</div>
+            <div class="entry-sub" id="entrySub">—</div>
+          </div>
+          <div class="entry-tag" id="entryTag">—</div>
+        </div>
+
+        <div class="score-status" id="scoreStatus">
+          <span class="dot"></span>
+          <span id="scoreStatusText">Not yet scored by you</span>
+        </div>
+
+        <div class="score-widget">
+          <input type="number" class="score-input" id="scoreInput" min="1" max="10" placeholder="1-10">
+          <button class="btn-submit-score" id="submitScoreBtn">Submit score</button>
+        </div>
+        <div class="score-msg" id="scoreMsg"></div>
+
+        <div class="nav-row">
+          <button class="nav-btn" id="prevBtn">← Previous</button>
+          <button class="nav-btn" id="nextBtn">Next →</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>Scores are saved per judge — you can only ever change your own</footer>
+</div>
+
+<script>
+  // ====== CONFIG — swap these once real infra exists ======
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwSNWkdWsI36IJwFjXM3_RC7A5komNFhMCUlA2hQeKrAWfQSn1vbChhYbOjcTM5_q6A/exec";
+
+  // SAMPLE DATA — replace with a real fetch from the Entries sheet once live.
+  const entries = [
+    { id: "E001", name: "Ain Sofea", age: 8, category: "A", thumbnailUrl: "https://via.placeholder.com/600x450.png?text=Entry+1" },
+    { id: "E002", name: "Rayyan Haziq", age: 11, category: "B", thumbnailUrl: "https://via.placeholder.com/600x450.png?text=Entry+2" },
+    { id: "E003", name: "Mei Ling", age: 7, category: "A", thumbnailUrl: "https://via.placeholder.com/600x450.png?text=Entry+3" },
+    { id: "E004", name: "Dev Aditya", age: 10, category: "B", thumbnailUrl: "https://via.placeholder.com/600x450.png?text=Entry+4" },
+    { id: "E005", name: "Nur Aisyah", age: 9, category: "A", thumbnailUrl: "https://via.placeholder.com/600x450.png?text=Entry+5" },
+    { id: "E006", name: "Kesavan", age: 12, category: "B", thumbnailUrl: "https://via.placeholder.com/600x450.png?text=Entry+6" },
+  ];
+
+  // ====== ACCESS CHECK ======
+  // Each judge gets a unique link like: portal.html?judge=Aisha&token=x7k9p2
+  // The token is checked again server-side on every submit/fetch — this
+  // client-side check only controls whether the UI *shows*, it is NOT the
+  // real security boundary (that lives in the Apps Script).
+  const params = new URLSearchParams(window.location.search);
+  const judgeName = params.get("judge");
+  const token = params.get("token");
+
+  let myScores = {}; // populated from server on load
+  let filtered = entries;
+  let index = 0;
+
+  if (!judgeName || !token) {
+    // no credentials in URL — show gate, stop here
+  } else {
+    document.getElementById("gateScreen").classList.add("hidden");
+    document.getElementById("portalRoot").classList.remove("hidden");
+    document.getElementById("judgeBadge").textContent = `Scoring as ${judgeName}`;
+    init();
+  }
+
+  async function init() {
+    // fetch this judge's existing scores so the UI reflects what they've
+    // already done (server re-validates the token on this call too)
+    try {
+      const res = await fetch(`${APPS_SCRIPT_URL}?judge=${encodeURIComponent(judgeName)}&token=${encodeURIComponent(token)}`);
+      const data = await res.json();
+      if (data.status === "ok") myScores = data.scores || {};
+    } catch (err) {
+      console.error("Could not load existing scores", err);
+    }
+    render();
+  }
+
+  function render() {
+    const e = filtered[index];
+    document.getElementById("progressLabel").textContent = `Entry ${index + 1} of ${filtered.length}`;
+    document.getElementById("progressFill").style.width = `${((index + 1) / filtered.length) * 100}%`;
+
+    document.getElementById("entryName").textContent = e.name;
+    document.getElementById("entrySub").textContent = `Age ${e.age} · Entry ID ${e.id}`;
+    document.getElementById("entryTag").textContent = `Category ${e.category}`;
+
+    const img = document.getElementById("entryImg");
+    img.style.display = "block";
+    document.getElementById("imgFallback").style.display = "none";
+    img.src = e.thumbnailUrl;
+    document.getElementById("fallbackLink").href = e.driveViewUrl || "#";
+
+    const existing = myScores[e.id];
+    const statusEl = document.getElementById("scoreStatus");
+    const scoreInput = document.getElementById("scoreInput");
+    if (existing !== undefined) {
+      statusEl.classList.add("done");
+      document.getElementById("scoreStatusText").textContent = `You scored this ${existing}/10`;
+      scoreInput.value = existing;
+    } else {
+      statusEl.classList.remove("done");
+      document.getElementById("scoreStatusText").textContent = "Not yet scored by you";
+      scoreInput.value = "";
+    }
+    document.getElementById("scoreMsg").textContent = "";
+
+    document.getElementById("prevBtn").disabled = index === 0;
+    document.getElementById("nextBtn").disabled = index === filtered.length - 1;
+  }
+
+  function showFallback() {
+    document.getElementById("entryImg").style.display = "none";
+    document.getElementById("imgFallback").style.display = "flex";
+  }
+
+  document.getElementById("prevBtn").onclick = () => { if (index > 0) { index--; render(); } };
+  document.getElementById("nextBtn").onclick = () => { if (index < filtered.length - 1) { index++; render(); } };
+
+  document.querySelectorAll(".filter-chip").forEach(chip => {
+    chip.onclick = () => {
+      document.querySelectorAll(".filter-chip").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      const cat = chip.dataset.cat;
+      filtered = cat === "all" ? entries : entries.filter(e => e.category === cat);
+      index = 0;
+      render();
+    };
+  });
+
+  document.getElementById("submitScoreBtn").onclick = async () => {
+    const e = filtered[index];
+    const val = parseInt(document.getElementById("scoreInput").value, 10);
+    const msgEl = document.getElementById("scoreMsg");
+
+    if (isNaN(val) || val < 1 || val > 10) {
+      msgEl.textContent = "Enter a score between 1 and 10.";
+      msgEl.className = "score-msg error";
+      return;
+    }
+
+    const btn = document.getElementById("submitScoreBtn");
+    btn.disabled = true;
+    msgEl.textContent = "Saving...";
+    msgEl.className = "score-msg";
+
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ judge: judgeName, token: token, entryId: e.id, score: val }),
+      });
+      const data = await res.json();
+      if (data.status === "ok") {
+        myScores[e.id] = val;
+        msgEl.textContent = "Saved ✓";
+        msgEl.className = "score-msg success";
+        render();
+      } else {
+        msgEl.textContent = data.message || "Could not save — check your access link.";
+        msgEl.className = "score-msg error";
+      }
+    } catch (err) {
+      msgEl.textContent = "Network error — try again.";
+      msgEl.className = "score-msg error";
+    }
+    btn.disabled = false;
+  };
+</script>
+
+</body>
+</html>
