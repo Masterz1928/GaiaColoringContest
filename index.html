@@ -328,9 +328,24 @@
     transition: filter 0.2s ease, opacity 0.2s ease;
   }
 
+  .contact-line {
+    font-size: 13px;
+    color: var(--cream, #FFF8E7);
+    margin-bottom: 16px;
+  }
+  .contact-line a {
+    color: var(--gold, #FFC72C);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .contact-line a:hover {
+    text-decoration: underline;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: 0.01ms !important; animation-delay: 0s !important; }
   }
+  
 </style>
 </head>
 <body>
@@ -397,6 +412,7 @@
 </section>
 
 <footer>
+  <p class="contact-line">Questions? Email us at <a href="mailto:info@xploregaia.com">info@xploregaia.com</a></p>
   <div class="sponsor-row">
     <div class="sponsor-group">
       <span class="sponsor-label">Organized By</span>
