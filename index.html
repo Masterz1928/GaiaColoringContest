@@ -50,6 +50,8 @@
   }
   .leaf-decor.tl { top: -40px; left: -40px; width: 220px; }
   .leaf-decor.br { bottom: -40px; right: -40px; width: 220px; transform: scaleX(-1); }
+  .leaf-decor.mid-left {top: 30%; left: -60px; width: 140px; opacity: 0.3; transform: rotate(25deg); }
+  .leaf-decor.mid-right {top: 20%; right: -50px; width: 160px; opacity: 0.3; transform: rotate(-15deg) scaleX(-1); }
 
 
   h1 {
@@ -121,15 +123,20 @@
   .btn:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
 
   /* hornbill illustration image slot */
-  .illo-wrap {
+    .illo-wrap {
     margin-top: 50px;
     width: min(520px, 90vw);
     opacity: 0;
     animation: dropIn 0.7s 0.65s cubic-bezier(0.34,1.56,0.64,1) forwards;
     z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 16px;
   }
+
   .illo-wrap img {
-    width: 100%;
+    width: 75%;
     height: auto;
     display: block;
     filter: drop-shadow(0 12px 24px rgba(0,0,0,0.35));
@@ -173,6 +180,7 @@
   @media (max-width: 560px) { .age-cards { grid-template-columns: 1fr; } }
 
   .age-card {
+    justify-items: center;
     background: var(--cream);
     color: var(--ink);
     border-radius: 20px;
@@ -182,7 +190,7 @@
   }
   .age-card .cat {
     font-family: 'Space Mono', monospace;
-    font-size: 11px;
+    font-size: 16px;
     font-weight: 700;
     background: var(--orange);
     color: var(--ink);
@@ -222,7 +230,7 @@
     flex-shrink: 0;
   }
   .step-text strong { display: block; font-size: 16px; margin-bottom: 2px; color: var(--cream); }
-  .step-text span { font-size: 14px; color: #B8AE94; }
+  .step-text span { font-size: 14px; color: #f0daa3; }
 
   /* Dates */
   .dates-row {
@@ -241,6 +249,15 @@
   .date-chip .label { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: var(--gold); text-transform: uppercase; }
   .date-chip .value { font-family: 'Baloo 2', sans-serif; font-size: 20px; margin-top: 6px; color: var(--cream); }
 
+  .prize-note {
+    text-align: center;
+    max-width: 480px;
+    margin: 24px auto 0;
+    font-size: 15px;
+    color: #D9CFB0;
+    font-weight: 600;
+  }
+
   /* Final CTA */
   .final-cta {
     text-align: center;
@@ -254,7 +271,29 @@
     padding: 30px 24px 50px;
     font-family: 'Space Mono', monospace;
     font-size: 12px;
-    color: #7A8F7E;
+    color: #f0daa3;
+  }
+
+    .social-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .social-icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--cream);
+    color: var(--ink);
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .social-icon:hover {
+    transform: translateY(-3px);
+    background: var(--gold);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -265,10 +304,12 @@
 <body>
 
 <section class="hero">
-  <svg class="leaf-decor tl" viewBox="0 0 200 200"><path d="M0,0 C60,20 100,60 90,140 C80,90 40,50 0,40 Z" fill="var(--bark)"/></svg>
-  <svg class="leaf-decor br" viewBox="0 0 200 200"><path d="M0,0 C60,20 100,60 90,140 C80,90 40,50 0,40 Z" fill="var(--bark)"/></svg>
-
-  <h1>Know Our<br>Hornbills</h1>
+<svg class="leaf-decor tl" viewBox="0 0 200 200"><path d="M0,0 C60,20 100,60 90,140 C80,90 40,50 0,40 Z" fill="var(--bark)"/></svg>
+<svg class="leaf-decor br" viewBox="0 0 200 200"><path d="M0,0 C60,20 100,60 90,140 C80,90 40,50 0,40 Z" fill="var(--bark)"/></svg>
+<svg class="leaf-decor mid-left" viewBox="0 0 200 200"><path d="M0,0 C60,20 100,60 90,140 C80,90 40,50 0,40 Z" fill="var(--bark)"/></svg>
+<svg class="leaf-decor mid-right" viewBox="0 0 200 200"><path d="M0,0 C60,20 100,60 90,140 C80,90 40,50 0,40 Z" fill="var(--bark)"/></svg>
+  
+<h1>Know Our<br>Hornbills</h1>
   <p class="tagline">COLOUR &nbsp;·&nbsp; LEARN &nbsp;·&nbsp; DISCOVER</p>
   <p class="sub">Meet the Rhinoceros Hornbill and the Great Hornbill — colour them in, learn what makes them different, and enter your artwork for a chance to win.</p>
 
@@ -279,7 +320,8 @@
 
   <div class="illo-wrap">
     <!-- swap src for your final transparent hornbill image once ready -->
-    <img src="hornbills.png" alt="Rhinoceros Hornbill and Great Hornbill illustration">
+    <img src="Great.jpg" alt="Rhinoceros Hornbill and Great Hornbill illustration">
+    <img src="Rhinoceros.jpg" alt="Rhinoceros Hornbill and Great Hornbill illustration">
   </div>
 </section>
 
@@ -288,25 +330,24 @@
   <div class="age-cards">
     <div class="age-card">
       <span class="cat">Category A</span>
-      <div class="range">7-9 yrs</div>
-      <p>Placeholder for prize details</p>
+      <div class="range">7 - 9 years old</div>
     </div>
     <div class="age-card">
       <span class="cat">Category B</span>
-      <div class="range">9-12 yrs</div>
-      <p>Placeholder for prize details</p>
+      <div class="range">10 - 12 years old</div>
     </div>
   </div>
+  <p class="prize-note">Think you've got what it takes? <strong>Win RM250 cash</strong> + a Certificate of Achievement for the top entry in each category. <br> Every single entry earns a Certificate of Participation too!</p>
 </section>
 
 <section class="block">
   <h2>Join in with five easy steps</h2>
   <div class="steps">
-    <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Download the official colouring sheet</strong><span>Link below/Click link above</span></div></div>
-    <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Learn about the two hornbills</strong><span>Placeholder — link to fun facts section.</span></div></div>
-    <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Colour your artwork creatively</strong><span>Any medium — crayons, pencils, paint, or color digitally.</span></div></div>
-    <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Submit your completed artwork</strong><span>Clear photo or scan, uploaded via the form.</span></div></div>
-    <div class="step"><div class="step-num">5</div><div class="step-text"><strong>Win exciting prizes</strong><span>Placeholder — prize details TBC.</span></div></div>
+    <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Download the official colouring sheet</strong><span>Grab the PDF and print it at home.</span></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Learn about the two hornbills</strong><span>Answer a short quiz to learn fun facts.</span></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Colour your artwork creatively</strong><span>Crayons, pencils, paint, or colour digitally.</span></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Submit your completed artwork</strong><span>Clear photo or scan, uploaded via the form in PDF format.</span></div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-text"><strong>Win exciting prizes</strong><span>RM250 cash + a Certificate of Achievement for the top entry in each category.</span></div></div>
   </div>
 </section>
 
@@ -324,7 +365,19 @@
 </section>
 
 <footer>
-  Organised by GAIA &nbsp;·&nbsp; Placeholder social links here
+  Organised by GAIA
+  <div class="social-row">
+  <a href="https://www.instagram.com/xploregaia/" target="_blank" class="social-icon" aria-label="Instagram">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+      <path d="M12 2.2c3.2 0 3.6 0 4.9.07 3.3.15 4.8 1.7 5 5 .06 1.3.07 1.6.07 4.8s0 3.6-.07 4.8c-.15 3.3-1.7 4.8-5 5-1.3.06-1.6.07-4.9.07s-3.6 0-4.9-.07c-3.3-.15-4.8-1.7-5-5C2.07 15.6 2.06 15.3 2.06 12s0-3.6.07-4.8c.15-3.3 1.7-4.8 5-5C8.4 2.2 8.7 2.2 12 2.2zm0 3.4a6.4 6.4 0 1 0 0 12.8 6.4 6.4 0 0 0 0-12.8zm0 10.56a4.16 4.16 0 1 1 0-8.32 4.16 4.16 0 0 1 0 8.32zm6.5-10.78a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+    </svg>
+  </a>
+  <a href="https://www.facebook.com/xploregaia" target="_blank" class="social-icon" aria-label="Facebook">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+      <path d="M13.5 9H15V6h-2c-2.2 0-4 1.8-4 4v2H7v3h2v6h3v-6h2.2l.8-3H12v-1.7c0-.72.58-1.3 1.3-1.3z"/>
+    </svg>
+  </a>
+</div>
 </footer>
 
 </body>
