@@ -122,17 +122,30 @@
   .btn-secondary { background: var(--cream); color: var(--ink); box-shadow: 4px 4px 0 var(--ink); }
   .btn:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
 
-  /* hornbill illustration image slot */
-    .illo-wrap {
-    margin-top: 50px;
-    width: min(520px, 90vw);
-    opacity: 0;
-    animation: dropIn 0.7s 0.65s cubic-bezier(0.34,1.56,0.64,1) forwards;
-    z-index: 2;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    gap: 16px;
+  .tnc-note {
+    font-size: 12px;
+    color: var(--muted, #8FA894);
+    margin-top: 12px;
+    text-align: center;
+  }
+  .tnc-note a {
+    color: var(--gold, #FFC72C);
+    text-decoration: none;
+  }
+  .tnc-note a:hover {
+    text-decoration: underline;
+  }
+
+  .illo-wrap {
+  margin-top: 50px;
+  width: min(520px, 90vw);
+  opacity: 0;
+  animation: dropIn 0.7s 0.65s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 16px;
   }
 
   .illo-wrap img {
@@ -207,7 +220,6 @@
   }
   .age-card p { margin-top: 8px; font-weight: 600; font-size: 14px; color: #5C4E3D; }
 
-  /* How to join steps */
   .steps { display: flex; flex-direction: column; gap: 14px; }
   .step {
     display: flex;
@@ -401,6 +413,8 @@
     <a class="btn btn-primary" href="https://drive.google.com/file/d/19cnNDoXyuo-RPz0ajey_DJVkNg1NO6YS/view?usp=sharing" role="button" target="_blank" rel="noopener noreferrer">Download the PDF</a>
     <a class="btn btn-secondary" href="https://forms.gle/7tiwNYwQTF9F7i168" role="button" target="_blank" rel="noopener noreferrer">Submit your entry</a>
   </div>
+  <p class="tnc-note">By submitting, you agree to the <a href="YOUR_TNC_LINK" target="_blank" rel="noopener noreferrer">Terms & Conditions</a>.</p>
+  
 
   <div class="illo-wrap">
     <div class="hornbill-pair">
@@ -489,6 +503,7 @@
       </svg>
     </a>
   </div>
+  <p class="contact-line"><a href="https://drive.google.com/file/d/1Dre7g3lYJBOsZ3akZZypSX4Ny-IoSea2/view?usp=sharing" target="_blank" rel="noopener noreferrer">Terms & Conditions</a></p>
 </footer>
 
 
