@@ -180,7 +180,7 @@
           <button class="nav-btn" id="nextBtn">Next →</button>
         </div>
       </div>
-    </div>
+    </div>  
   </main>
 
   <footer>Scores are saved per judge — you can only ever change your own</footer>
@@ -188,29 +188,21 @@
 
 <script>
   // ====== CONFIG — swap these once real infra exists ======
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzbn9lg7wv6gTWB67P-ZCAMzzzLcLbfdZFDARBS7uEb5emn_OdUEcw9D3bs3kaV1rSq/exec";
-
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyVNoyhAVVMMwnxKqXELg7Fpu3dlErO6ggM-qlNnTxPnHd05hNcrM27YxoSQcBEuHB-/exec";
   // SAMPLE DATA — replace with a real fetch from the Entries sheet once live.
-  const entries = [
-    { id: "E001", name: "Ain Sofea", age: 8, category: "A", thumbnailUrl: "https://via.placeholder.com/600x450.png?text=Entry+1" },
-    { id: "E002", name: "Rayyan Haziq", age: 11, category: "B", thumbnailUrl: "https://via.placeholder.com/600x450.png?text=Entry+2" },
-    { id: "E003", name: "Mei Ling", age: 7, category: "A", thumbnailUrl: "https://via.placeholder.com/600x450.png?text=Entry+3" },
-    { id: "E004", name: "Dev Aditya", age: 10, category: "B", thumbnailUrl: "https://via.placeholder.com/600x450.png?text=Entry+4" },
-    { id: "E005", name: "Nur Aisyah", age: 9, category: "A", thumbnailUrl: "https://via.placeholder.com/600x450.png?text=Entry+5" },
-    { id: "E006", name: "Kesavan", age: 12, category: "B", thumbnailUrl: "https://via.placeholder.com/600x450.png?text=Entry+6" },
-  ];
+  let entries = [];
+  let filtered = [];
 
   // ====== ACCESS CHECK ======
   // Each judge gets a unique link like: portal.html?judge=Aisha&token=x7k9p2
   // The token is checked again server-side on every submit/fetch — this
   // client-side check only controls whether the UI *shows*, it is NOT the
   // real security boundary (that lives in the Apps Script).
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(window.location.search);      
   const judgeName = params.get("judge");
   const token = params.get("token");
 
   let myScores = {}; // populated from server on load
-  let filtered = entries;
   let index = 0;
 
   if (!judgeName || !token) {
@@ -223,32 +215,53 @@
   }
 
   async function init() {
-    // fetch this judge's existing scores so the UI reflects what they've
-    // already done (server re-validates the token on this call too)
+    const q = `judge=${encodeURIComponent(judgeName)}&token=${encodeURIComponent(token)}`;
     try {
-      const res = await fetch(`${APPS_SCRIPT_URL}?judge=${encodeURIComponent(judgeName)}&token=${encodeURIComponent(token)}`);
-      const data = await res.json();
-      if (data.status === "ok") myScores = data.scores || {};
+      const [eRes, sRes] = await Promise.all([
+        fetch(`${APPS_SCRIPT_URL}?action=entries&${q}`),
+        fetch(`${APPS_SCRIPT_URL}?${q}`),
+      ]);
+      const eData = await eRes.json();
+      const sData = await sRes.json();
+      if (eData.status !== "ok") throw new Error(eData.message || "Entries request failed");
+      if (!Array.isArray(eData.entries)) throw new Error("No entries list returned. Is the new Apps Script version deployed?");
+      entries = eData.entries;
+      filtered = entries;
+      if (sData.status === "ok") myScores = sData.scores || {};
     } catch (err) {
-      console.error("Could not load existing scores", err);
+      console.error(err);
+      document.getElementById("entryName").textContent = "Could not load entries";
+      document.getElementById("entrySub").textContent = err.message;
+      return;
     }
     render();
   }
 
   function render() {
     const e = filtered[index];
+    if (!e) { document.getElementById("entryName").textContent = "No entries yet"; return; }
     document.getElementById("progressLabel").textContent = `Entry ${index + 1} of ${filtered.length}`;
     document.getElementById("progressFill").style.width = `${((index + 1) / filtered.length) * 100}%`;
 
-    document.getElementById("entryName").textContent = e.name;
-    document.getElementById("entrySub").textContent = `Age ${e.age} · Entry ID ${e.id}`;
+    document.getElementById("entryName").textContent = `Entry ${e.id}`;
+    document.getElementById("entrySub").textContent =
+      e.category === "A" ? "Ages 7–9" : e.category === "B" ? "Ages 10–12" : "";
     document.getElementById("entryTag").textContent = `Category ${e.category}`;
 
     const img = document.getElementById("entryImg");
-    img.style.display = "block";
     document.getElementById("imgFallback").style.display = "none";
-    img.src = e.thumbnailUrl;
-    document.getElementById("fallbackLink").href = e.driveViewUrl || "#";
+    if (e.fileId) {
+      img.style.display = "block";
+      img.src = `https://drive.google.com/thumbnail?id=${e.fileId}&sz=w1000`;
+      document.getElementById("fallbackLink").href = `https://drive.google.com/file/d/${e.fileId}/view`;
+    } else {
+      showFallback();
+    }
+
+  function showFallback() {
+    document.getElementById("entryImg").style.display = "none";
+    document.getElementById("imgFallback").style.display = "flex";
+  }
 
     const existing = myScores[e.id];
     const statusEl = document.getElementById("scoreStatus");
