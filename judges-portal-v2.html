@@ -251,11 +251,12 @@
       e.category === "A" ? "Ages 7–9" : e.category === "B" ? "Ages 10–12" : "";
     document.getElementById("entryTag").textContent = `Category ${e.category}`;
 
-    const img = document.getElementById("entryImg");
+    const frame = document.getElementById("entryFrame");
+    document.getElementById("entryImg").style.display = "none";
     document.getElementById("imgFallback").style.display = "none";
     if (e.fileId) {
-      img.style.display = "block";
-      img.src = `https://drive.google.com/thumbnail?id=${e.fileId}&sz=w1000`;
+      frame.style.display = "block";
+      frame.src = `https://drive.google.com/file/d/${e.fileId}/preview`;
       document.getElementById("fallbackLink").href = `https://drive.google.com/file/d/${e.fileId}/view`;
     } else {
       showFallback();
