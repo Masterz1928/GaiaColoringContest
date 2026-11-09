@@ -113,6 +113,16 @@
   .nav-btn:hover { background: var(--bg); }
   .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+  /*Updated css for scoring using updated rubircs*/
+  .rubric-row { margin-top: 14px; }
+  .rubric-head { display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; }
+  .rubric-guide { font-size: 11.5px; color: var(--muted); margin: 2px 0 6px; }
+  .rubric-input, .flag-select { width: 100%; padding: 10px 12px; font-size: 16px; border: 1px solid var(--border); border-radius: 10px; font-family: 'Inter', sans-serif; background: var(--card); }
+  .rubric-input:focus, .flag-select:focus { outline: none; border-color: var(--teal); }
+  .rubric-total { margin-top: 16px; font-size: 15px; font-weight: 700; }
+  .flag-select { margin-top: 14px; font-size: 14px; }
+  .btn-submit-score { width: 100%; margin-top: 14px; }
+
   footer { margin-top: 36px; font-size: 12px; color: var(--muted); text-align: center; }
   .hidden { display: none !important; }
 </style>
@@ -172,10 +182,10 @@
           <span id="scoreStatusText">Not yet scored by you</span>
         </div>
 
-        <div class="score-widget">
-          <input type="number" class="score-input" id="scoreInput" min="1" max="10" placeholder="1-10">
+        <div id="rubric"></div>
+          <div class="rubric-total">Total: <span id="scTotal">0</span> / 100</div>
+          <select id="flagSelect" class="flag-select" aria-label="Flag for organiser review"></select>
           <button class="btn-submit-score" id="submitScoreBtn">Submit score</button>
-        </div>
         <div class="score-msg" id="scoreMsg"></div>
 
         <div class="nav-row">
@@ -190,17 +200,38 @@
 </div>
 
 <script>
-  // ====== CONFIG — swap these once real infra exists ======
   const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyVNoyhAVVMMwnxKqXELg7Fpu3dlErO6ggM-qlNnTxPnHd05hNcrM27YxoSQcBEuHB-/exec";
-  // SAMPLE DATA — replace with a real fetch from the Entries sheet once live.
   let entries = [];
   let filtered = [];
+  const CRITERIA = [
+    { key: "creativity", label: "Creativity & Artistic Expression", max: 30, guide: "Excellent 26–30 · Good 20–25 · Fair 14–19 · Needs improvement 0–13" },
+    { key: "technique",  label: "Colour Application & Technique",   max: 25, guide: "Excellent 21–25 · Good 16–20 · Fair 11–15 · Needs improvement 0–10" },
+    { key: "neatness",   label: "Neatness & Presentation",          max: 25, guide: "Excellent 21–25 · Good 16–20 · Fair 11–15 · Needs improvement 0–10" },
+    { key: "impact",     label: "Overall Visual Impact",            max: 20, guide: "Excellent 17–20 · Good 13–16 · Fair 9–12 · Needs improvement 0–8" },
+  ];
+  const FLAGS = [
+    "Used AI", "Digitally coloured or enhanced", "Not coloured with pencils", "Incomplete",
+    "Not original work", "Template altered", "Inappropriate content", "Identifying marks on front"
+  ];
 
-  // ====== ACCESS CHECK ======
-  // Each judge gets a unique link like: portal.html?judge=Aisha&token=x7k9p2
-  // The token is checked again server-side on every submit/fetch — this
-  // client-side check only controls whether the UI *shows*, it is NOT the
-  // real security boundary (that lives in the Apps Script).
+  const rubricEl = document.getElementById("rubric");
+  rubricEl.innerHTML = CRITERIA.map(c => `
+    <div class="rubric-row">
+      <div class="rubric-head"><span>${c.label}</span><span>/${c.max}</span></div>
+      <div class="rubric-guide">${c.guide}</div>
+      <input type="number" class="rubric-input" id="sc-${c.key}" min="0" max="${c.max}" step="1" inputmode="numeric">
+    </div>`).join("");
+
+  const flagSelect = document.getElementById("flagSelect");
+  flagSelect.innerHTML = `<option value="">Flag for review: none</option>` +
+    FLAGS.map(f => `<option>${f}</option>`).join("");
+
+  function updateTotal() {
+    const t = CRITERIA.reduce((s, c) => s + (parseInt(document.getElementById("sc-" + c.key).value, 10) || 0), 0);
+    document.getElementById("scTotal").textContent = t;
+  }
+  rubricEl.addEventListener("input", updateTotal);
+
   const params = new URLSearchParams(window.location.search);      
   const judgeName = params.get("judge");
   const token = params.get("token");
@@ -269,15 +300,21 @@
 
     const existing = myScores[e.id];
     const statusEl = document.getElementById("scoreStatus");
-    const scoreInput = document.getElementById("scoreInput");
-    if (existing !== undefined) {
+    CRITERIA.forEach(c => {
+      const v = existing ? existing[c.key] : "";
+      document.getElementById("sc-" + c.key).value = (v === "" || v === undefined || v === null) ? "" : v;
+    });
+    flagSelect.value = existing && existing.flag ? existing.flag : "";
+    updateTotal();
+    if (existing) {
       statusEl.classList.add("done");
-      document.getElementById("scoreStatusText").textContent = `You scored this ${existing}/10`;
-      scoreInput.value = existing;
+      document.getElementById("scoreStatusText").textContent =
+        existing.flag
+      ? `Flagged: ${existing.flag}` + (existing.total !== "" ? ` · ${existing.total}/100` : "")
+      : `You scored this ${existing.total}/100`;
     } else {
       statusEl.classList.remove("done");
       document.getElementById("scoreStatusText").textContent = "Not yet scored by you";
-      scoreInput.value = "";
     }
     document.getElementById("scoreMsg").textContent = "";
 
@@ -306,13 +343,22 @@
 
   document.getElementById("submitScoreBtn").onclick = async () => {
     const e = filtered[index];
-    const val = parseInt(document.getElementById("scoreInput").value, 10);
     const msgEl = document.getElementById("scoreMsg");
+    const flag = flagSelect.value;
+    const payload = { judge: judgeName, token: token, entryId: e.id, flag: flag };
 
-    if (isNaN(val) || val < 1 || val > 10) {
-      msgEl.textContent = "Enter a score between 1 and 10.";
-      msgEl.className = "score-msg error";
-      return;
+    const anyMark = CRITERIA.some(c => document.getElementById("sc-" + c.key).value !== "");
+    if (!flag || anyMark) {
+      for (const c of CRITERIA) {
+        const raw = document.getElementById("sc-" + c.key).value;
+        const n = Number(raw);
+        if (raw === "" || !Number.isInteger(n) || n < 0 || n > c.max) {
+          msgEl.textContent = `${c.label}: enter a whole number from 0 to ${c.max}.`;
+          msgEl.className = "score-msg error";
+          return;
+        }
+        payload[c.key] = n;
+      }
     }
 
     const btn = document.getElementById("submitScoreBtn");
@@ -321,22 +367,22 @@
     msgEl.className = "score-msg";
 
     try {
-      const res = await fetch(APPS_SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({ judge: judgeName, token: token, entryId: e.id, score: val }),
-      });
+      const res = await fetch(APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
       const data = await res.json();
       if (data.status === "ok") {
-        myScores[e.id] = val;
+        const rec = { flag: flag, total: "" };
+        CRITERIA.forEach(c => { rec[c.key] = payload[c.key] !== undefined ? payload[c.key] : ""; });
+        if (payload.creativity !== undefined) rec.total = CRITERIA.reduce((s, c) => s + payload[c.key], 0);
+        myScores[e.id] = rec;
+        render();
         msgEl.textContent = "Saved ✓";
         msgEl.className = "score-msg success";
-        render();
       } else {
-        msgEl.textContent = data.message || "Could not save — check your access link.";
+        msgEl.textContent = data.message || "Could not save. Check your access link.";
         msgEl.className = "score-msg error";
       }
     } catch (err) {
-      msgEl.textContent = "Network error — try again.";
+      msgEl.textContent = "Network error. Try again.";
       msgEl.className = "score-msg error";
     }
     btn.disabled = false;
